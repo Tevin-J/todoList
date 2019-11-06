@@ -14,3 +14,22 @@
 .todoList-task {
 
 }
+
+.filter-active {
+  background-color: #39bfff;
+}
+
+.filter-low {
+  color: yellow;
+  text-shadow: 1px 1px 2px black;
+}
+
+.filter-medium {
+  color: orange;
+  text-shadow: 1px 1px 2px black;
+}
+
+.filter-high {
+  color: red;
+  text-shadow: 1px 1px 2px black;
+}
