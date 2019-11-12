@@ -10,9 +10,7 @@ class TodoListTask extends React.Component {
             priorityClass = 'filter-medium';
         } else {
             priorityClass = 'filter-low';
-        }; /*создали переменную, которая принимает значение свойства priority объекта task,
-        с помощью конструкции if-else в зависимости от того, какое значение указано в priority,
-        присвоили priorityClass необходимое значение CSS-класса из App.css*/
+        };
 
         return (
             <div className="todoList-task">

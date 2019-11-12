@@ -6,8 +6,7 @@ class TodoListFooter extends React.Component {
 
         let classForAll = this.props.filterValue === "All" ? "filter-active" : "";
         let classForCompleted = this.props.filterValue === "Completed" ? "filter-active" : "";
-        let classForActive = this.props.filterValue === "Active" ? "filter-active" : ""; /*8 прописали привязку класса
-        к классу CSS filter-active*/
+        let classForActive = this.props.filterValue === "Active" ? "filter-active" : "";
 
         return (
             <div className="todoList-footer">
