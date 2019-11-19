@@ -18,39 +18,54 @@ class App extends React.Component {
             {name: 'HTML', isDone: true, priority: 'low'},
             {name: 'React.js', isDone: false, priority: 'high'},
         ],
-        filterValue : 'Active',
+        filterValue : 'All',
 
     };
-
-    onAddTaskClick = () => {
-        let newTaskName = this.newTaskTitleRef.current.value;
-        let newTask = {name: newTaskName, isDone: false, priority: 'high'};
+    addTask = (newText) => {
+        let newTask = {name: newText, isDone: false, priority: 'high'};
         let newTasks = [...this.state.tasks, newTask];/*аналогия метода push, но создает
                                 новый массив. возьмет содержимое указанного объекта, и поместит в него
                                 дополнительно тот элемент, что полсле запятой*/
         this.setState({
-                      tasks: newTasks /*перезатирание старого свойства tasks у state на новое, где появился
+            tasks: newTasks /*перезатирание старого свойства tasks у state на новое, где появился
                                     новый элемент, а setState сам включает render грубо говоря*/
         });
-        this.newTaskTitleRef.current.value = '';
+    }
+
+    changeFilter = (newFilterValue) => {
+        this.setState({
+            filterValue: newFilterValue
+        });
     };
+
+    changeStatus = (task, isDone) => {
+        let newTasks = this.state.tasks.map(t => {
+            if (t != task) {
+                return t;
+            } else {
+                return {...t, isDone: isDone};
+            }
+        })
+        this.setState({
+            tasks:newTasks
+        })
+    }
+
     render = () => {
 
         return (
             <div className="App">
                 <div className="todoList">
-                    {/*<TodoListHeader/>*/}
-                    <div className="todoList-header">
-                        <h3 className="todoList-header__title">What to Learn</h3>
-                        <div className="todoList-newTaskForm">
-                            <input ref={this.newTaskTitleRef} type="text" placeholder="New task name"/>
-                            <button onClick={this.onAddTaskClick}> {/*это callback ф-я*/}
-                                Add
-                            </button>
-                        </div>
-                    </div>
-                    <TodoListTasks tasks={this.state.tasks}/>
-                    <TodoListFooter filterValue={this.state.filterValue}/>
+                    <TodoListHeader addTask={this.addTask}/>
+
+                    <TodoListTasks changeStatus={this.changeStatus} tasks={this.state.tasks.filter(task => {
+                        switch (this.state.filterValue) {
+                            case 'All': return true;
+                            case 'Active': return !task.isDone;
+                            case 'Completed': return task.isDone;
+                        }
+                    })}/>
+                    <TodoListFooter changeFilter={this.changeFilter} filterValue={this.state.filterValue}/>
                 </div>
             </div>
         );
