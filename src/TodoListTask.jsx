@@ -15,9 +15,9 @@ class TodoListTask extends React.Component {
         } else {
             priorityClass = 'filter-low';
         };
-
+        let classesForTask = this.props.task.isDone ? 'todoList-task done' : 'todoList-task';
         return (
-            <div className="todoList-task">
+            <div className={classesForTask}>
                 <input onChange={this.onIsDoneChanged} type="checkbox" checked={this.props.task.isDone}/>
                 <span className={priorityClass}>{this.props.task.name}</span> {/*поместили CSS-класс из App.css в этот тэг*/}
             </div>

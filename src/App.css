@@ -33,3 +33,11 @@
   color: red;
   text-shadow: 1px 1px 1px black;
 }
+
+.error {
+  border-color: red;
+}
+
+.done {
+  opacity: 0.5;
+}
