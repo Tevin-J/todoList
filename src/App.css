@@ -42,3 +42,19 @@
 .done {
   opacity: 0.5;
 }
+.todoListTitle {
+  position: relative;
+}
+.removeTodoListButton {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+}
+.taskInfo {
+  position: relative;
+}
+.removeTaskButton {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+}

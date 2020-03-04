@@ -4,60 +4,20 @@ import AddNewItemForm from "./AddNewItemForm";
 import TodoListTasks from "./TodoListTasks";
 import TodoListFooter from "./TodoListFooter";
 import TodoListTitle from "./TodoListTitle";
+import {connect} from "react-redux";
 
 class TodoList extends React.Component {
-
-
-    componentDidMount() {
-        this.restoreState()
-    }
 
     nextTaskId = 0;
 
     state = {
-        tasks : [
-            /*{id: 0, name: 'CSS', isDone: true, priority: 'low'},
-            {id: 1, name: 'JavaScript', isDone: false, priority: 'medium'},
-            {id: 2, name: 'HTML', isDone: true, priority: 'low'},
-            {id: 3, name: 'React.js', isDone: false, priority: 'high'},*/
-        ],
         filterValue : 'All',
-
     };
 
-    saveState = () => {
-        let stateAsString = JSON.stringify(this.state);
-        localStorage.setItem('our-state-' + this.props.id, stateAsString)
-    }
-
-    restoreState = () => {
-        let state = {
-            tasks: [],
-            filterValue: 'All'
-        };
-        let stateAsString = localStorage.getItem('our-state-' + this.props.id);
-        if (stateAsString != null) {
-            state = JSON.parse(stateAsString);
-        }
-        this.setState(state, () => {
-            this.state.tasks.forEach((task) => {
-                if (task.id >= this.nextTaskId) {
-                    this.nextTaskId = task.id + 1;
-                }
-            })
-        });
-    }
-
-    addItem = (newText) => {
+    addTask = (newText) => {
         let newTask = {id: this.nextTaskId, name: newText, isDone: false, priority: 'high'};
         this.nextTaskId++;
-        let newTasks = [...this.state.tasks, newTask];/*аналогия метода push, но создает
-                                новый массив. возьмет содержимое указанного объекта, и поместит в него
-                                дополнительно тот элемент, что полсле запятой*/
-        this.setState({
-            tasks: newTasks /*перезатирание старого свойства tasks у state на новое, где появился
-                                    новый элемент, а setState сам включает render грубо говоря*/
-        }, () => {this.saveState()});
+        this.props.addTask(newTask, this.props.id)
     }
 
     changeFilter = (newFilterValue) => {
@@ -67,56 +27,32 @@ class TodoList extends React.Component {
     };
 
     changeStatus = (taskId, isDone) => {
-        /*let newTasks = this.state.tasks.map(t => {
-            if (t.id != taskId) {
-                return t;
-            } else {
-                return {...t, ...{isDone: isDone}};
-            }
-        })
-        this.setState({
-            tasks:newTasks
-        })*/
         this.changeTask(taskId, {isDone: isDone})
     }
 
     changeTitle = (taskId, newTitle) => {
-        /*let newTasks = this.state.tasks.map(t => {
-            if (t.id != taskId) {
-                return t;
-            } else {
-                return {...t, ...{name: newTitle}};
-            }
-        })
-        this.setState({
-            tasks:newTasks
-        })*/
         this.changeTask(taskId, {name: newTitle})
     }
 
     changeTask = (taskId, obj) => {
-        let newTasks = this.state.tasks.map(t => {
-            if (t.id != taskId) {
-                return t;
-            } else {
-                return {...t, ...obj};
-            }
-        })
-        this.setState({
-            tasks:newTasks
-        },  () => {this.saveState()})
+        this.props.changeTask(this.props.id, taskId, obj)
     }
-
+    onRemoveTodoListClick = () => {
+        this.props.removeTodoList(this.props.id)
+    }
     render = () => {
 
         return (
             <div className="App">
                 <div className="todoList">
                     <div className="todoList-header">
-                        <TodoListTitle title={this.props.title}/>
-                        <AddNewItemForm addItem={this.addItem} title={this.props.title}/>
+                        <div className='todoListTitle'>
+                            <TodoListTitle title={this.props.title}/>
+                            <button className='removeTodoListButton' onClick={this.onRemoveTodoListClick}>x</button>
+                        </div>
+                        <AddNewItemForm addItem={this.addTask} title={this.props.title}/>
                     </div>
-                    <TodoListTasks changeTitle={this.changeTitle} changeStatus={this.changeStatus} tasks={this.state.tasks.filter(task => {
+                    <TodoListTasks changeTitle={this.changeTitle} todoListId={this.props.id} changeStatus={this.changeStatus} tasks={this.props.tasks.filter(task => {
                         switch (this.state.filterValue) {
                             case 'All': return true;
                             case 'Active': return !task.isDone;
@@ -130,6 +66,34 @@ class TodoList extends React.Component {
         );
     }
 }
-
-export default TodoList;
+const mapDispatchToProps = (dispatch) => {
+    return {
+        addTask(newTask, todoListId) {
+            const action = {
+                type: 'ADD-TASK',
+                newTask,
+                todoListId
+            }
+            dispatch(action)
+        },
+        changeTask(todoListId, taskId, obj) {
+            const action = {
+                type: 'CHANGE-TASK',
+                todoListId,
+                taskId,
+                obj
+            }
+            dispatch(action)
+        },
+        removeTodoList(todoListId) {
+            const action = {
+                type: 'REMOVE-TODOLIST',
+                todoListId
+            }
+            dispatch(action)
+        }
+    }
+}
+const ConnectedTodoList = connect(null, mapDispatchToProps)(TodoList)
+export default ConnectedTodoList;
 
