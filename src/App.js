@@ -42,8 +42,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         addTodoList: (newTodoList) => {
-            const action = addTodolistAC(newTodoList)
-            dispatch(action)
+            dispatch(addTodolistAC(newTodoList))
         }
     }
 }

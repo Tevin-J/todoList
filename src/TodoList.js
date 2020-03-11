@@ -70,16 +70,13 @@ class TodoList extends React.Component {
 const mapDispatchToProps = (dispatch) => {
     return {
         addTask(newTask, todoListId) {
-            const action = addTaskAC(newTask, todoListId)
-            dispatch(action)
+            dispatch(addTaskAC(newTask, todoListId))
         },
         changeTask(todoListId, taskId, obj) {
-            const action = changeTaskAC(todoListId, taskId, obj)
-            dispatch(action)
+            dispatch(changeTaskAC(todoListId, taskId, obj))
         },
         removeTodoList(todoListId) {
-            const action = removeTodolistAC(todoListId)
-            dispatch(action)
+            dispatch(removeTodolistAC(todoListId))
         }
     }
 }
