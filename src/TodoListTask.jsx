@@ -1,5 +1,6 @@
 import React from 'react';
 import {connect} from "react-redux";
+import {removeTaskAC} from "./reducer";
 
 class TodoListTask extends React.Component {
 
@@ -55,11 +56,7 @@ class TodoListTask extends React.Component {
 const mapDispatchToProps = (dispatch) => {
     return {
         removeTask(todoListId, taskId) {
-            const action = {
-                type: 'REMOVE-TASK',
-                todoListId,
-                taskId
-            }
+            const action = removeTaskAC(todoListId, taskId)
             dispatch(action)
         }
     }
