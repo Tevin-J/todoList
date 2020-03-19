@@ -3,19 +3,37 @@ import './App.css';
 import TodoList from "./TodoList";
 import AddNewItemForm from "./AddNewItemForm";
 import {connect} from "react-redux";
-import {addTodolistAC} from "./reducer";
+import {addTodolistAC, setTodoListsAC} from "./reducer";
+import axios from "axios";
 
 class App extends React.Component {
-    nextTodoListId = 0;
+
+    componentDidMount() {
+        this.restoreState()
+    }
+
+    restoreState = () => {
+        axios.get(`https://social-network.samuraijs.com/api/1.1/todo-lists`,
+            {withCredentials: true})
+            .then(response => {
+                this.props.setTodoLists(response.data)
+            })
+    }
 
     addTodoList = (title) => {
-        let newTodoList = {
-            id: this.nextTodoListId,
-            title: title,
-            tasks: [] /*добавили необходимое свойство tasks,чтоб при добавлении нового tdl не падала ошибка*/
-        }
-        this.nextTodoListId++;
-        this.props.addTodoList(newTodoList)
+        axios.post(`https://social-network.samuraijs.com/api/1.1/todo-lists`,
+            {title: title},
+            {
+                withCredentials: true,
+                headers: {'API-KEY': 'f28b0cf7-313a-42c3-9df8-994bce274198'}
+            }
+        )
+            .then(response => {
+                debugger
+                if (response.data.resultCode === 0) {
+                    this.props.addTodoList(response.data.data.item)
+                }
+            })
     }
 
     render = () => {
@@ -43,6 +61,9 @@ const mapDispatchToProps = (dispatch) => {
     return {
         addTodoList: (newTodoList) => {
             dispatch(addTodolistAC(newTodoList))
+        },
+        setTodoLists: (todoLists) => {
+            dispatch(setTodoListsAC(todoLists))
         }
     }
 }

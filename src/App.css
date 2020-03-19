@@ -20,18 +20,28 @@
   background-color: #39bfff;
 }
 
-.filter-low {
+.Low {
+  color: green;
+  text-shadow: 1px 1px 1px black;
+}
+
+.Middle {
   color: yellow;
   text-shadow: 1px 1px 1px black;
 }
 
-.filter-medium {
+.High {
   color: orange;
   text-shadow: 1px 1px 1px black;
 }
 
-.filter-high {
+.Urgently {
   color: red;
+  text-shadow: 1px 1px 1px black;
+}
+
+.Later {
+  color: dodgerblue;
   text-shadow: 1px 1px 1px black;
 }
 
