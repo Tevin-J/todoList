@@ -14,8 +14,8 @@ class App extends React.Component {
 
     restoreState = () => {
         axios.get(`https://social-network.samuraijs.com/api/1.1/todo-lists`,
-            {withCredentials: true})
-            .then(response => {
+            {withCredentials: true}
+            ).then(response => {
                 this.props.setTodoLists(response.data)
             })
     }
@@ -27,10 +27,10 @@ class App extends React.Component {
                 withCredentials: true,
                 headers: {'API-KEY': 'f28b0cf7-313a-42c3-9df8-994bce274198'}
             }
-        )
-            .then(response => {
+        ).then(response => {
                 debugger
                 if (response.data.resultCode === 0) {
+                    debugger
                     this.props.addTodoList(response.data.data.item)
                 }
             })

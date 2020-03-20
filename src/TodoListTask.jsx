@@ -1,6 +1,7 @@
 import React from 'react';
 import {connect} from "react-redux";
 import {removeTaskAC} from "./reducer";
+import axios from 'axios'
 
 class TodoListTask extends React.Component {
 
@@ -18,14 +19,24 @@ class TodoListTask extends React.Component {
 
     onStatusChanged = (event) => {
         let status = event.currentTarget.checked ? 2 : 0;
-        this.props.changeStatus(this.props.task.id, status);
+        this.props.changeStatus(this.props.task, status);
     };
 
     onTitleChanged = (event) => {
-        this.props.changeTitle(this.props.task.id, event.currentTarget.value)
+        this.props.changeTitle(this.props.task, event.currentTarget.value)
     }
     onRemoveTaskButtonClick = () => {
-        this.props.removeTask(this.props.todoListId, this.props.task.id)
+        let todoListId = this.props.todoListId;
+        let taskId = this.props.task.id;
+        axios.delete(`https://social-network.samuraijs.com/api/1.1/todo-lists/${todoListId}/tasks/${taskId}`,
+            {
+                withCredentials: true,
+                headers: {'API-KEY': 'f28b0cf7-313a-42c3-9df8-994bce274198'}
+            }
+            ).then(response => {
+                this.props.removeTask(todoListId, taskId)
+        })
+
     }
     render() {
         debugger
@@ -50,7 +61,7 @@ class TodoListTask extends React.Component {
         return (
             <div className='taskInfo'>
                 <div className={classesForTask}>
-                    {this.props.task.status === 2
+                    {this.props.task.status === 0
                         ? <input onChange={this.onStatusChanged} type="checkbox" checked={this.props.task.status}/>
                         : ''}
                     { this.state.editMode
@@ -70,8 +81,7 @@ class TodoListTask extends React.Component {
 const mapDispatchToProps = (dispatch) => {
     return {
         removeTask(todoListId, taskId) {
-            const action = removeTaskAC(todoListId, taskId)
-            dispatch(action)
+            dispatch(removeTaskAC(todoListId, taskId))
         }
     }
 }

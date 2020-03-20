@@ -51,16 +51,29 @@ class TodoList extends React.Component {
         },  () => {this.saveState()});
     };
 
-    changeStatus = (taskId, status) => {
-        this.changeTask(taskId, {status: status})
+    changeStatus = (task, status) => {
+        this.changeTask(task, {status: status})
     }
 
-    changeTitle = (taskId, newTitle) => {
-        this.changeTask(taskId, {title: newTitle})
+    changeTitle = (task, newTitle) => {
+        this.changeTask(task, {title: newTitle})
     }
 
-    changeTask = (taskId, obj) => {
-        this.props.changeTask(this.props.id, taskId, obj)
+    changeTask = (task, obj) => {
+        let todoListId = this.props.id;
+        let taskId = task.id;
+        let changedTask = {...task, ...obj};
+        axios.put(`https://social-network.samuraijs.com/api/1.1/todo-lists/${todoListId}/tasks/${taskId}`,
+            changedTask,
+            {
+                withCredentials: true,
+                headers: {'API-KEY': 'f28b0cf7-313a-42c3-9df8-994bce274198'}
+            }
+            ).then(response => {
+                if (response.data.resultCode === 0) {
+                    this.props.changeTask(response.data.data.item)
+                }
+        })
     }
     onRemoveTodoListClick = () => {
         let todoListId = this.props.id
@@ -108,8 +121,8 @@ const mapDispatchToProps = (dispatch) => {
         addTask(newTask, todoListId) {
             dispatch(addTaskAC(newTask, todoListId))
         },
-        changeTask(todoListId, taskId, obj) {
-            dispatch(changeTaskAC(todoListId, taskId, obj))
+        changeTask(task) {
+            dispatch(changeTaskAC(task))
         },
         removeTodoList(todoListId) {
             dispatch(removeTodolistAC(todoListId))

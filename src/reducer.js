@@ -67,12 +67,12 @@ const reducer = (state = initialState, action) => { /*если state не при
             return {
                 ...state,
                 todoLists: state.todoLists.map(tl => {
-                    if (tl.id === action.todoListId) {
+                    if (tl.id === action.task.todoListId) {
                         return {
                             ...tl,
                             tasks: tl.tasks.map(t => {
-                                if (t.id === action.taskId) {
-                                    return {...t, ...action.obj}
+                                if (t.id === action.task.id) {
+                                    return action.task
                                 } else {
                                     return t
                                 }
@@ -115,7 +115,7 @@ const reducer = (state = initialState, action) => { /*если state не при
 }
 export const addTodolistAC = (newTodoList) => ({type: ADD_TODOLIST, newTodoList})
 export const addTaskAC = (newTask, todoListId) => ({type: ADD_TASK, newTask, todoListId})
-export const changeTaskAC = (todoListId, taskId, obj) => ({type: CHANGE_TASK, todoListId, taskId, obj})
+export const changeTaskAC = (task) => ({type: CHANGE_TASK, task})
 export const removeTodolistAC = (todoListId) => ({type: REMOVE_TODOLIST, todoListId})
 export const removeTaskAC = (todoListId, taskId) => ({type: REMOVE_TASK, todoListId, taskId})
 export const setTodoListsAC = (todoLists) => ({type: SET_TODOLISTS, todoLists})
