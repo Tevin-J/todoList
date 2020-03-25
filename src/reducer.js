@@ -8,25 +8,7 @@ export const SET_TASKS = 'TodoList/Reducer/SET_TASKS'
 
 
 const initialState = {
-    todoLists: [
-        /*{
-            id: 0,
-            title: "important",
-            tasks: [
-                {id: 0, title: "one", isDone: false, priority: "high"},
-                {id: 1, title: "two", isDone: true, priority: "low"}
-            ]
-        },
-        {
-            id: 1,
-            title: "not important",
-            tasks: [
-                {id: 0, title: "one", isDone: false, priority: "high"},
-                {id: 1, title: "two", isDone: true, priority: "low"}
-            ]
-        }*/
-    ]
-
+    todoLists: []
 }
 
 const reducer = (state = initialState, action) => { /*если state не придет, то будет использован initialState*/

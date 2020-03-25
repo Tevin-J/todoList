@@ -28,9 +28,7 @@ class App extends React.Component {
                 headers: {'API-KEY': 'f28b0cf7-313a-42c3-9df8-994bce274198'}
             }
         ).then(response => {
-                debugger
                 if (response.data.resultCode === 0) {
-                    debugger
                     this.props.addTodoList(response.data.data.item)
                 }
             })

@@ -48,7 +48,7 @@ class TodoList extends React.Component {
     changeFilter = (newFilterValue) => {
         this.setState({
             filterValue: newFilterValue
-        },  () => {this.saveState()});
+        });
     };
 
     changeStatus = (task, status) => {
@@ -105,8 +105,8 @@ class TodoList extends React.Component {
                     <TodoListTasks changeTitle={this.changeTitle} todoListId={this.props.id} changeStatus={this.changeStatus} tasks={tasks.filter(task => {
                         switch (this.state.filterValue) {
                             case 'All': return true;
-                            case 'Active': return !task.isDone;
-                            case 'Completed': return task.isDone;
+                            case 'Active': return !task.status;
+                            case 'Completed': return task.status;
                             default: return true;
                         }
                     })}/>

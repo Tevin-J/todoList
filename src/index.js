@@ -9,7 +9,7 @@ import store from "./store";
 
 
 ReactDOM.render(
-    <Provider store={store}>
+    <Provider store={store}> {/*создаем контекст, к которому будут иметь доступ все компоненты внутри тега Provider*/}
         <App />
     </Provider>, document.getElementById('root'));
 

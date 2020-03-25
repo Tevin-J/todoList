@@ -9,9 +9,7 @@ class TodoListTasks extends React.Component {
                             todoListId={this.props.todoListId} changeTitle={this.props.changeTitle}/>);
 
         return (
-
             <div className="todoList-tasks">
-
                 {tasksElements}
             </div>
         );
