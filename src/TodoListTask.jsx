@@ -1,12 +1,13 @@
 import React from 'react';
 import {connect} from "react-redux";
 import {removeTaskAC} from "./reducer";
-import axios from 'axios'
+import {api} from "./api";
 
 class TodoListTask extends React.Component {
 
     state = {
-        editMode: false
+        editMode: false,
+        title: this.props.task.title
     }
 
     activateEditMode = () => {
@@ -15,6 +16,7 @@ class TodoListTask extends React.Component {
 
     deactivateEditMode = () => {
         this.setState({editMode: false})
+        this.props.changeTitle(this.props.task, this.state.title)
     }
 
     onStatusChanged = (event) => {
@@ -23,23 +25,18 @@ class TodoListTask extends React.Component {
     };
 
     onTitleChanged = (event) => {
-        this.props.changeTitle(this.props.task, event.currentTarget.value)
+        this.setState({title: event.currentTarget.value.trimLeft()})
     }
     onRemoveTaskButtonClick = () => {
         let todoListId = this.props.todoListId;
         let taskId = this.props.task.id;
-        axios.delete(`https://social-network.samuraijs.com/api/1.1/todo-lists/${todoListId}/tasks/${taskId}`,
-            {
-                withCredentials: true,
-                headers: {'API-KEY': 'f28b0cf7-313a-42c3-9df8-994bce274198'}
-            }
-            ).then(response => {
+        api.removeTask(todoListId, taskId)
+            .then(response => {
                 this.props.removeTask(todoListId, taskId)
         })
 
     }
     render() {
-        debugger
         let priorityClass = this.props.task.priority;
         switch (priorityClass) {
             case 0:
@@ -65,9 +62,9 @@ class TodoListTask extends React.Component {
                         ? <input onChange={this.onStatusChanged} type="checkbox" checked={this.props.task.status}/>
                         : ''}
                     { this.state.editMode
-                        ? <input autoFocus={true} onBlur={this.deactivateEditMode} value={this.props.task.name}
+                        ? <input autoFocus={true} onBlur={this.deactivateEditMode} value={this.state.title}
                                                    onChange={this.onTitleChanged}/>
-                        : <span onClick={this.activateEditMode} className={priorityClass}>
+                        : <span onDoubleClick={this.activateEditMode} className={priorityClass}>
                             {this.props.task.id} - {this.props.task.title}
                           </span> }
                 </div>

@@ -5,8 +5,8 @@ import TodoListTasks from "./TodoListTasks";
 import TodoListFooter from "./TodoListFooter";
 import TodoListTitle from "./TodoListTitle";
 import {connect} from "react-redux";
-import {addTaskAC, changeTaskAC, removeTodolistAC, setTasksAC} from "./reducer";
-import axios from "axios";
+import {addTaskAC, changeTaskAC, removeTodolistAC, setTasksAC, updateTodoListTitleAC} from "./reducer";
+import {api} from "./api";
 
 class TodoList extends React.Component {
     componentDidMount() {
@@ -14,12 +14,8 @@ class TodoList extends React.Component {
     }
     restoreState = () => {
         let todoListId = this.props.id
-        axios.get(`https://social-network.samuraijs.com/api/1.1/todo-lists/${todoListId}/tasks`,
-            {
-                withCredentials: true,
-                headers: {'API-KEY': 'f28b0cf7-313a-42c3-9df8-994bce274198'}
-            }
-            ).then(response => {
+        api.getTasks(todoListId)
+            .then(response => {
                 if (response.data.error === null) {
                     this.props.setTasks(response.data.items, todoListId)
                 }
@@ -32,13 +28,8 @@ class TodoList extends React.Component {
 
     addTask = (newText) => {
         let todoListId = this.props.id
-        axios.post(`https://social-network.samuraijs.com/api/1.1/todo-lists/${todoListId}/tasks`,
-            {title: newText},
-            {
-                withCredentials: true,
-                headers: {'API-KEY': 'f28b0cf7-313a-42c3-9df8-994bce274198'}
-            }
-            ).then(response => {
+        api.createTask(todoListId, newText)
+            .then(response => {
                 if (response.data.resultCode === 0) {
                     this.props.addTask(response.data.data.item, todoListId)
                 }
@@ -63,13 +54,8 @@ class TodoList extends React.Component {
         let todoListId = this.props.id;
         let taskId = task.id;
         let changedTask = {...task, ...obj};
-        axios.put(`https://social-network.samuraijs.com/api/1.1/todo-lists/${todoListId}/tasks/${taskId}`,
-            changedTask,
-            {
-                withCredentials: true,
-                headers: {'API-KEY': 'f28b0cf7-313a-42c3-9df8-994bce274198'}
-            }
-            ).then(response => {
+        api.changeTask(todoListId, taskId, changedTask)
+            .then(response => {
                 if (response.data.resultCode === 0) {
                     this.props.changeTask(response.data.data.item)
                 }
@@ -77,12 +63,7 @@ class TodoList extends React.Component {
     }
     onRemoveTodoListClick = () => {
         let todoListId = this.props.id
-        axios.delete(`https://social-network.samuraijs.com/api/1.1/todo-lists/${todoListId}`,
-            {
-                withCredentials: true,
-                headers: {'API-KEY': 'f28b0cf7-313a-42c3-9df8-994bce274198'}
-            }
-            )
+        api.removeTodoList(todoListId)
             .then(response => {
                 if (response.data.resultCode === 0) {
                     this.props.removeTodoList(todoListId)
@@ -97,7 +78,7 @@ class TodoList extends React.Component {
                 <div className="todoList">
                     <div className="todoList-header">
                         <div className='todoListTitle'>
-                            <TodoListTitle title={this.props.title}/>
+                            <TodoListTitle title={this.props.title} id={this.props.id} updateTodoListTitle={this.props.updateTodoListTitle}/>
                             <button className='removeTodoListButton' onClick={this.onRemoveTodoListClick}>x</button>
                         </div>
                         <AddNewItemForm addItem={this.addTask} title={this.props.title}/>
@@ -129,6 +110,9 @@ const mapDispatchToProps = (dispatch) => {
         },
         setTasks(tasks, todoListId) {
             dispatch(setTasksAC(tasks, todoListId))
+        },
+        updateTodoListTitle(todoListId, todoListTitle) {
+            dispatch(updateTodoListTitleAC(todoListId, todoListTitle))
         }
     }
 }
