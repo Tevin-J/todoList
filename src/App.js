@@ -4,6 +4,7 @@ import TodoList from "./TodoList";
 import AddNewItemForm from "./AddNewItemForm";
 import {connect} from "react-redux";
 import {createTodoList, getTodoLists} from "./reducer";
+import preloader from './assets/preloader.gif'
 
 class App extends React.Component {
 
@@ -24,6 +25,7 @@ class App extends React.Component {
             <TodoList id={todoList.id} title={todoList.title} tasks={todoList.tasks}/>)
         return (
             <>
+                {this.props.isFetching ? <img className={'img'} src={preloader}/> : ''}
                 <div>
                     <AddNewItemForm addItem={this.addTodoList}/>
                 </div>
@@ -37,7 +39,8 @@ class App extends React.Component {
 }
 const mapStateToProps = (state) => {
     return {
-        todoLists: state.todoLists
+        todoLists: state.todoLists,
+        isFetching: state.isFetching
     }
 }
 
