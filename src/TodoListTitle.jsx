@@ -1,6 +1,7 @@
 import React from 'react';
 import './App.css';
-import {api} from "./api";
+import {connect} from "react-redux";
+import {changeTodoList} from "./reducer";
 
 class TodoListTitle extends React.Component {
     state = {
@@ -20,12 +21,7 @@ class TodoListTitle extends React.Component {
     }
     deactivateEditMode = () => {
         this.setState({isEditMode: false})
-        api.changeTodoList(this.props.id, this.state.title)
-            .then(response => {
-                if (response.data.resultCode === 0) {
-                    this.props.updateTodoListTitle(this.props.id, this.state.title)
-                }
-            })
+        this.props.changeTodoList(this.props.id, this.state.title)
     }
     render = () => {
         return (
@@ -38,6 +34,6 @@ class TodoListTitle extends React.Component {
         );
     }
 }
-
-export default TodoListTitle;
+const connectedTodoListTitle = connect(null, {changeTodoList})(TodoListTitle)
+export default connectedTodoListTitle;
 

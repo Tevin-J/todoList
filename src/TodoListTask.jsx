@@ -1,6 +1,6 @@
 import React from 'react';
 import {connect} from "react-redux";
-import {removeTaskAC} from "./reducer";
+import {removeTask} from "./reducer";
 import {api} from "./api";
 
 class TodoListTask extends React.Component {
@@ -30,10 +30,8 @@ class TodoListTask extends React.Component {
     onRemoveTaskButtonClick = () => {
         let todoListId = this.props.todoListId;
         let taskId = this.props.task.id;
-        api.removeTask(todoListId, taskId)
-            .then(response => {
-                this.props.removeTask(todoListId, taskId)
-        })
+        this.props.removeTask(todoListId, taskId)
+
 
     }
     render() {
@@ -75,12 +73,6 @@ class TodoListTask extends React.Component {
         )
     }
 }
-const mapDispatchToProps = (dispatch) => {
-    return {
-        removeTask(todoListId, taskId) {
-            dispatch(removeTaskAC(todoListId, taskId))
-        }
-    }
-}
-const ConnectedTodoListTask = connect(null, mapDispatchToProps)(TodoListTask)
+
+const ConnectedTodoListTask = connect(null, {removeTask})(TodoListTask)
 export default ConnectedTodoListTask;
