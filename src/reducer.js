@@ -8,12 +8,12 @@ export const REMOVE_TASK = 'TodoList/Reducer/REMOVE-TASK'
 export const SET_TODOLISTS = 'TodoList/Reducer/SET_TODOLISTS'
 export const SET_TASKS = 'TodoList/Reducer/SET_TASKS'
 export const UPDATE_TODOLIST_TITLE = 'TodoList/Reducer/UPDATE_TODOLIST_TITLE'
-export const TOGGLE_IS_FETCHING = 'TodoList/Reducer/TOGGLE_IS_FETCHING'
-
+export const LOADING_TODOLISTS = 'TodoList/Reducer/LOADING_TODOLISTS'
+export const LOADING_TASKS = 'TodoList/Reducer/LOADING_TASKS'
 
 const initialState = {
     todoLists: [],
-    isFetching: true
+    isFetching: false
 }
 
 const reducer = (state = initialState, action) => { /*если state не придет, то будет использован initialState*/
@@ -21,7 +21,11 @@ const reducer = (state = initialState, action) => { /*если state не при
         case SET_TODOLISTS:
             return {
                 ...state,
-                todoLists: action.todoLists.map(tl => ({...tl, tasks: []}))
+                todoLists: action.todoLists.map(tl => ({
+                    ...tl,
+                    tasks: [],
+                isFetching: false
+                }))
             }
         case ADD_TODOLIST:
             return {
@@ -108,10 +112,24 @@ const reducer = (state = initialState, action) => { /*если state не при
                     }
                 })
             }
-        case TOGGLE_IS_FETCHING:
+        case LOADING_TODOLISTS:
             return {
                 ...state,
                 isFetching: action.isFetching
+            }
+        case LOADING_TASKS:
+            return {
+                ...state,
+                todoLists: state.todoLists.map(tl => {
+                    if (tl.id === action.todoListId) {
+                        return {
+                            ...tl,
+                            isFetching: action.isFetching
+                        }
+                    } else {
+                        return tl
+                    }
+                })
             }
     }
     return state
@@ -125,80 +143,71 @@ const removeTaskAC = (todoListId, taskId) => ({type: REMOVE_TASK, todoListId, ta
 const setTodoListsAC = (todoLists) => ({type: SET_TODOLISTS, todoLists})
 const setTasksAC = (tasks, todoListId) => ({type: SET_TASKS, tasks, todoListId})
 const updateTodoListTitleAC = (todoListId, todoListTitle) => ({type: UPDATE_TODOLIST_TITLE, todoListId, todoListTitle})
-const toggleIsFetchingAC = (isFetching) => ({type: TOGGLE_IS_FETCHING, isFetching})
+const loadingTodoListsAC = (isFetching) => ({type: LOADING_TODOLISTS, isFetching})
+const loadingTasksAC = (isFetching, todoListId) => ({type: LOADING_TASKS, isFetching, todoListId})
 /*thunks*/
 export const getTodoLists = () => (dispatch) => {
+    dispatch(loadingTodoListsAC(true))
     api.getTodoLists()
         .then(response => {
             dispatch(setTodoListsAC(response.data))
+            dispatch(loadingTodoListsAC(false))
         })
 }
 export const createTodoList = (title) => (dispatch) => {
-    dispatch(toggleIsFetchingAC(true))
     api.createTodoList(title)
         .then(response => {
             if (response.data.resultCode === 0) {
                 dispatch(addTodoListAC(response.data.data.item))
-                dispatch(toggleIsFetchingAC(false))
             }
         })
 }
 export const removeTodoList = (todoListId) => (dispatch) => {
-    dispatch(toggleIsFetchingAC(true))
     api.removeTodoList(todoListId)
         .then(response => {
             if (response.data.resultCode === 0) {
                 dispatch(removeTodoListAC(todoListId))
-                dispatch(toggleIsFetchingAC(false))
             }
 
         })
 }
 export const getTasks = (todoListId) => (dispatch) => {
-    dispatch(toggleIsFetchingAC(true))
+    dispatch(loadingTasksAC(true, todoListId))
     api.getTasks(todoListId)
         .then(response => {
             if (response.data.error === null) {
                 dispatch(setTasksAC(response.data.items, todoListId))
-                dispatch(toggleIsFetchingAC(false))
+                dispatch(loadingTasksAC(false, todoListId))
             }
         })
 }
 export const addTask = (todoListId, newText) => (dispatch) => {
-    dispatch(toggleIsFetchingAC(true))
     api.createTask(todoListId, newText)
         .then(response => {
             if (response.data.resultCode === 0) {
                 dispatch(addTaskAC(response.data.data.item, todoListId))
-                dispatch(toggleIsFetchingAC(false))
             }
         })
 }
 export const changeTask = (todoListId, taskId, changedTask) => (dispatch) => {
-    dispatch(toggleIsFetchingAC(true))
     api.changeTask(todoListId, taskId, changedTask)
         .then(response => {
             if (response.data.resultCode === 0) {
                 dispatch(changeTaskAC(response.data.data.item))
-                dispatch(toggleIsFetchingAC(false))
             }
         })
 }
 export const removeTask = (todoListId, taskId) => (dispatch) => {
-    dispatch(toggleIsFetchingAC(true))
     api.removeTask(todoListId, taskId)
         .then(response => {
             dispatch(removeTaskAC(todoListId, taskId))
-            dispatch(toggleIsFetchingAC(false))
         })
 }
 export const changeTodoList = (todoListId, todoListTitle) => (dispatch) => {
-    dispatch(toggleIsFetchingAC(true))
     api.changeTodoList(todoListId, todoListTitle)
         .then(response => {
             if (response.data.resultCode === 0) {
                 dispatch(updateTodoListTitleAC(todoListId, todoListTitle))
-                dispatch(toggleIsFetchingAC(false))
             }
         })
 }

@@ -22,15 +22,17 @@ class App extends React.Component {
 
     render = () => {
         const todoLists = this.props.todoLists.map(todoList =>
-            <TodoList id={todoList.id} title={todoList.title} tasks={todoList.tasks}/>)
+            <TodoList todoList={todoList} id={todoList.id} title={todoList.title} tasks={todoList.tasks}/>)
         return (
             <>
-                {this.props.isFetching ? <img className={'img'} src={preloader}/> : ''}
                 <div>
                     <AddNewItemForm addItem={this.addTodoList}/>
                 </div>
                 <div className="App">
-                    {todoLists}
+                    {this.props.isFetching
+                        ? <img className={'img'} src={preloader}/>
+                        : todoLists
+                    }
                 </div>
             </>
 

@@ -6,11 +6,13 @@ import TodoListFooter from "./TodoListFooter";
 import TodoListTitle from "./TodoListTitle";
 import {connect} from "react-redux";
 import {addTask, changeTask, getTasks, removeTodoList} from "./reducer";
+import preloader from './assets/preloader.gif'
 
 class TodoList extends React.Component {
     componentDidMount() {
         this.restoreState()
     }
+
     restoreState = () => {
         let todoListId = this.props.id
         this.props.getTasks(todoListId)
@@ -18,7 +20,7 @@ class TodoList extends React.Component {
     }
 
     state = {
-        filterValue : 'All',
+        filterValue: 'All',
     };
 
     addTask = (newText) => {
@@ -59,25 +61,34 @@ class TodoList extends React.Component {
                 <div className="todoList">
                     <div className="todoList-header">
                         <div className='todoListTitle'>
-                            <TodoListTitle title={this.props.title} id={this.props.id} />
+                            <TodoListTitle title={this.props.title} id={this.props.id}/>
                             <button className='removeTodoListButton' onClick={this.onRemoveTodoListClick}>x</button>
                         </div>
                         <AddNewItemForm addItem={this.addTask} title={this.props.title}/>
                     </div>
-                    <TodoListTasks changeTitle={this.changeTitle} todoListId={this.props.id} changeStatus={this.changeStatus} tasks={tasks.filter(task => {
-                        switch (this.state.filterValue) {
-                            case 'All': return true;
-                            case 'Active': return !task.status;
-                            case 'Completed': return task.status;
-                            default: return true;
-                        }
-                    })}/>
+                    {this.props.todoList.isFetching
+                        ? <img src={preloader} className='img'/>
+                        : <TodoListTasks changeTitle={this.changeTitle} todoListId={this.props.id}
+                                         changeStatus={this.changeStatus} tasks={tasks.filter(task => {
+                            switch (this.state.filterValue) {
+                                case 'All':
+                                    return true;
+                                case 'Active':
+                                    return !task.status;
+                                case 'Completed':
+                                    return task.status;
+                                default:
+                                    return true;
+                            }
+                        })}/>}
+
                     <TodoListFooter changeFilter={this.changeFilter} filterValue={this.state.filterValue}/>
                 </div>
             </div>
         );
     }
 }
+
 const ConnectedTodoList = connect(null, {addTask, changeTask, removeTodoList, getTasks})(TodoList)
 export default ConnectedTodoList;
 
