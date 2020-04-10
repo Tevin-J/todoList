@@ -5,18 +5,28 @@ import AddNewItemForm from "./AddNewItemForm";
 import {connect} from "react-redux";
 import {createTodoList, getTodoLists} from "./reducer";
 import preloader from './assets/preloader.gif'
-
-class App extends React.Component {
+import {TodoListType} from "./types/entities";
+import {AppStateType} from "./store";
+type MapStateToPropsType = {
+    todoLists: Array<TodoListType>
+    isFetching: boolean
+}
+type MapDispatchToPropsType = {
+    getTodoLists: () => void
+    createTodoList: (title: string) => void
+}
+type PropsType = MapStateToPropsType & MapDispatchToPropsType
+class App extends React.Component<PropsType> {
 
     componentDidMount() {
         this.restoreState()
     }
 
-    restoreState = () => {
+    restoreState = (): void => {
         this.props.getTodoLists()
     }
 
-    addTodoList = (title) => {
+    addTodoList = (title: string): void => {
         this.props.createTodoList(title)
     }
 
@@ -39,13 +49,12 @@ class App extends React.Component {
         );
     }
 }
-const mapStateToProps = (state) => {
+const mapStateToProps = (state: AppStateType): MapStateToPropsType => {
     return {
-        todoLists: state.todoLists,
-        isFetching: state.isFetching
+        todoLists: state.todoList.todoLists,
+        isFetching: state.todoList.isFetching
     }
 }
 
-const ConnectedApp = connect(mapStateToProps, {getTodoLists, createTodoList})(App)
-export default ConnectedApp;
+export default connect<MapStateToPropsType, MapDispatchToPropsType, {}, AppStateType>(mapStateToProps, {getTodoLists, createTodoList})(App)
 

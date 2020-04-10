@@ -1,4 +1,5 @@
 import {api} from "./api";
+import {TaskType, TodoListType} from "./types/entities";
 
 export const ADD_TODOLIST = 'TodoList/Reducer/ADD-TODOLIST'
 export const ADD_TASK = 'TodoList/Reducer/ADD-TASK'
@@ -11,12 +12,17 @@ export const UPDATE_TODOLIST_TITLE = 'TodoList/Reducer/UPDATE_TODOLIST_TITLE'
 export const LOADING_TODOLISTS = 'TodoList/Reducer/LOADING_TODOLISTS'
 export const LOADING_TASKS = 'TodoList/Reducer/LOADING_TASKS'
 
-const initialState = {
+type InitialStateType = {
+    todoLists: Array<TodoListType>
+    isFetching: boolean
+}
+
+const initialState: InitialStateType = {
     todoLists: [],
     isFetching: false
 }
 
-const reducer = (state = initialState, action) => { /*если state не придет, то будет использован initialState*/
+const reducer = (state: InitialStateType = initialState, action: AppActionType): InitialStateType => {
     switch (action.type) {
         case SET_TODOLISTS:
             return {
@@ -66,6 +72,7 @@ const reducer = (state = initialState, action) => { /*если state не при
                 })
             }
         case CHANGE_TASK:
+            debugger
             return {
                 ...state,
                 todoLists: state.todoLists.map(tl => {
@@ -134,19 +141,79 @@ const reducer = (state = initialState, action) => { /*если state не при
     }
     return state
 }
-/*actions*/
-const addTodoListAC = (newTodoList) => ({type: ADD_TODOLIST, newTodoList})
-const addTaskAC = (newTask, todoListId) => ({type: ADD_TASK, newTask, todoListId})
-const changeTaskAC = (task) => ({type: CHANGE_TASK, task})
-const removeTodoListAC = (todoListId) => ({type: REMOVE_TODOLIST, todoListId})
-const removeTaskAC = (todoListId, taskId) => ({type: REMOVE_TASK, todoListId, taskId})
-const setTodoListsAC = (todoLists) => ({type: SET_TODOLISTS, todoLists})
-const setTasksAC = (tasks, todoListId) => ({type: SET_TASKS, tasks, todoListId})
-const updateTodoListTitleAC = (todoListId, todoListTitle) => ({type: UPDATE_TODOLIST_TITLE, todoListId, todoListTitle})
-const loadingTodoListsAC = (isFetching) => ({type: LOADING_TODOLISTS, isFetching})
-const loadingTasksAC = (isFetching, todoListId) => ({type: LOADING_TASKS, isFetching, todoListId})
-/*thunks*/
-export const getTodoLists = () => (dispatch) => {
+/*action creators types*/
+type SetTodoListsType = {
+    type: typeof SET_TODOLISTS
+    todoLists: Array<TodoListType>
+}
+type SetTasksType = {
+    type: typeof SET_TASKS
+    tasks: Array<TaskType>
+    todoListId: string
+}
+type AddTodoListType = {
+    type: typeof ADD_TODOLIST
+    newTodoList: TodoListType
+}
+type AddTaskType = {
+    type: typeof ADD_TASK
+    newTask: TaskType
+    todoListId: string
+}
+type ChangeTaskType = {
+    type: typeof CHANGE_TASK
+    task: TaskType
+}
+type UpdateTodoListTitleType = {
+    type: typeof UPDATE_TODOLIST_TITLE
+    todoListId: string
+    todoListTitle: string
+}
+type RemoveTodoListType = {
+    type: typeof REMOVE_TODOLIST
+    todoListId: string
+}
+type RemoveTaskType = {
+    type: typeof REMOVE_TASK
+    todoListId: string
+    taskId: string
+}
+type LoadingTodoListsType = {
+    type: typeof LOADING_TODOLISTS
+    isFetching: boolean
+}
+type LoadingTasksType = {
+    type: typeof LOADING_TASKS
+    isFetching: boolean
+    todoListId: string
+}
+
+type TodoActionTypes =
+    SetTodoListsType
+    | SetTasksType
+    | AddTodoListType
+    | AddTaskType
+    | ChangeTaskType
+    | UpdateTodoListTitleType
+    | RemoveTodoListType
+    | RemoveTaskType
+    | LoadingTodoListsType
+    | LoadingTasksType
+
+type AppActionType = TodoActionTypes
+/*action creators*/
+const setTodoListsAC = (todoLists: Array<TodoListType>): SetTodoListsType => ({type: SET_TODOLISTS, todoLists})
+const setTasksAC = (tasks: Array<TaskType>, todoListId: string): SetTasksType => ({type: SET_TASKS, tasks, todoListId})
+const addTodoListAC = (newTodoList: TodoListType): AddTodoListType => ({type: ADD_TODOLIST, newTodoList})
+const addTaskAC = (newTask: TaskType, todoListId: string): AddTaskType => ({type: ADD_TASK, newTask, todoListId})
+const updateTodoListTitleAC = (todoListId: string, todoListTitle: string): UpdateTodoListTitleType => ({type: UPDATE_TODOLIST_TITLE, todoListId, todoListTitle})
+const changeTaskAC = (task: TaskType): ChangeTaskType => ({type: CHANGE_TASK, task})
+const removeTodoListAC = (todoListId: string): RemoveTodoListType => ({type: REMOVE_TODOLIST, todoListId})
+const removeTaskAC = (todoListId: string, taskId: string): RemoveTaskType => ({type: REMOVE_TASK, todoListId, taskId})
+const loadingTodoListsAC = (isFetching: boolean): LoadingTodoListsType => ({type: LOADING_TODOLISTS, isFetching})
+const loadingTasksAC = (isFetching: boolean, todoListId: string): LoadingTasksType => ({type: LOADING_TASKS, isFetching, todoListId})
+/*thunk creators*/
+export const getTodoLists = () => (dispatch: any) => {
     dispatch(loadingTodoListsAC(true))
     api.getTodoLists()
         .then(response => {
@@ -154,7 +221,7 @@ export const getTodoLists = () => (dispatch) => {
             dispatch(loadingTodoListsAC(false))
         })
 }
-export const createTodoList = (title) => (dispatch) => {
+export const createTodoList = (title: string) => (dispatch: any) => {
     api.createTodoList(title)
         .then(response => {
             if (response.data.resultCode === 0) {
@@ -162,7 +229,7 @@ export const createTodoList = (title) => (dispatch) => {
             }
         })
 }
-export const removeTodoList = (todoListId) => (dispatch) => {
+export const removeTodoList = (todoListId: string) => (dispatch: any) => {
     api.removeTodoList(todoListId)
         .then(response => {
             if (response.data.resultCode === 0) {
@@ -171,7 +238,7 @@ export const removeTodoList = (todoListId) => (dispatch) => {
 
         })
 }
-export const getTasks = (todoListId) => (dispatch) => {
+export const getTasks = (todoListId: string) => (dispatch: any) => {
     dispatch(loadingTasksAC(true, todoListId))
     api.getTasks(todoListId)
         .then(response => {
@@ -181,7 +248,7 @@ export const getTasks = (todoListId) => (dispatch) => {
             }
         })
 }
-export const addTask = (todoListId, newText) => (dispatch) => {
+export const addTask = (todoListId: string, newText: string) => (dispatch: any) => {
     api.createTask(todoListId, newText)
         .then(response => {
             if (response.data.resultCode === 0) {
@@ -189,21 +256,23 @@ export const addTask = (todoListId, newText) => (dispatch) => {
             }
         })
 }
-export const changeTask = (todoListId, taskId, changedTask) => (dispatch) => {
+export const changeTask = (todoListId: string, taskId: string, changedTask: TaskType) => (dispatch: any) => {
+    debugger
     api.changeTask(todoListId, taskId, changedTask)
         .then(response => {
+            debugger
             if (response.data.resultCode === 0) {
                 dispatch(changeTaskAC(response.data.data.item))
             }
         })
 }
-export const removeTask = (todoListId, taskId) => (dispatch) => {
+export const removeTask = (todoListId: string, taskId: string) => (dispatch: any) => {
     api.removeTask(todoListId, taskId)
         .then(response => {
             dispatch(removeTaskAC(todoListId, taskId))
         })
 }
-export const changeTodoList = (todoListId, todoListTitle) => (dispatch) => {
+export const changeTodoList = (todoListId: string, todoListTitle: string) => (dispatch: any) => {
     api.changeTodoList(todoListId, todoListTitle)
         .then(response => {
             if (response.data.resultCode === 0) {

@@ -1,17 +1,29 @@
-import React from 'react';
+import React, {ChangeEvent, ChangeEventHandler, KeyboardEventHandler} from 'react';
 import './App.css';
 import {connect} from "react-redux";
 import {changeTodoList} from "./reducer";
-
-class TodoListTitle extends React.Component {
-    state = {
+import {AppStateType} from "./store";
+type StateType = {
+    title: string
+    isEditMode: boolean
+}
+type OwnPropsType = {
+    title: string
+    id: string
+}
+type MapDispatchToPropsType = {
+    changeTodoList: (id: string, title: string) => void
+}
+type PropsType = OwnPropsType & MapDispatchToPropsType
+class TodoListTitle extends React.Component<PropsType, StateType> {
+    state: StateType = {
         title: this.props.title,
         isEditMode: false
     }
-    onTitleChanged = (e) => {
+    onTitleChanged = (e: ChangeEvent<HTMLInputElement>) => {
         this.setState({title: e.currentTarget.value.trimLeft()})
     }
-    onEnterPress = (e) => {
+    onEnterPress = (e: any/*KeyboardEvent<HTMLInputElement>*/) => {
         if (e.key === 'Enter') {
             this.deactivateEditMode()
         }
@@ -34,6 +46,6 @@ class TodoListTitle extends React.Component {
         );
     }
 }
-const connectedTodoListTitle = connect(null, {changeTodoList})(TodoListTitle)
+const connectedTodoListTitle = connect<{}, MapDispatchToPropsType, OwnPropsType, AppStateType>(null, {changeTodoList})(TodoListTitle)
 export default connectedTodoListTitle;
 

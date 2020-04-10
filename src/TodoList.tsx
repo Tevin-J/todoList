@@ -7,8 +7,28 @@ import TodoListTitle from "./TodoListTitle";
 import {connect} from "react-redux";
 import {addTask, changeTask, getTasks, removeTodoList} from "./reducer";
 import preloader from './assets/preloader.gif'
-
-class TodoList extends React.Component {
+import {TaskType, TodoListType} from "./types/entities";
+type StateType = {
+    filterValue: string
+}
+type OwnPropsType = {
+    todoList: TodoListType
+    id: string
+    title: string
+    tasks: Array<TaskType>
+}
+type MapDispatchToPropsType = {
+    addTask: (todoListId: string, newText: string) => void
+    changeTask: (todoListId: string, taskId: string, changedTask: TaskType) => void
+    removeTodoList: (todoListId: string) => void
+    getTasks: (todoListId: string) => void
+}
+type ChangingTaskObjType = {
+    status?: number
+    title?: string
+}
+type PropsType = OwnPropsType & MapDispatchToPropsType & ChangingTaskObjType
+class TodoList extends React.Component<PropsType, StateType> {
     componentDidMount() {
         this.restoreState()
     }
@@ -19,30 +39,31 @@ class TodoList extends React.Component {
 
     }
 
-    state = {
-        filterValue: 'All',
+    state: StateType = {
+        filterValue: 'All'
     };
 
-    addTask = (newText) => {
+    addTask = (newText: string) => {
         let todoListId = this.props.id
         this.props.addTask(todoListId, newText)
     }
 
-    changeFilter = (newFilterValue) => {
+    changeFilter = (newFilterValue: string) => {
         this.setState({
             filterValue: newFilterValue
         });
     };
 
-    changeStatus = (task, status) => {
+    changeStatus = (task: TaskType, status: number) => {
+        debugger
         this.changeTask(task, {status: status})
     }
 
-    changeTitle = (task, newTitle) => {
+    changeTitle = (task: TaskType, newTitle: string) => {
         this.changeTask(task, {title: newTitle})
     }
 
-    changeTask = (task, obj) => {
+    changeTask = (task: TaskType, obj: ChangingTaskObjType) => {
         let todoListId = this.props.id;
         let taskId = task.id;
         let changedTask = {...task, ...obj};
@@ -89,6 +110,6 @@ class TodoList extends React.Component {
     }
 }
 
-const ConnectedTodoList = connect(null, {addTask, changeTask, removeTodoList, getTasks})(TodoList)
+const ConnectedTodoList = connect<{}, MapDispatchToPropsType, OwnPropsType>(null, {addTask, changeTask, removeTodoList, getTasks})(TodoList)
 export default ConnectedTodoList;
 

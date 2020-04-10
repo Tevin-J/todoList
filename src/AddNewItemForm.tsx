@@ -1,10 +1,19 @@
-import React from 'react';
+import React, {ChangeEvent} from 'react';
 import './App.css';
-import TodoListTitle from "./TodoListTitle";
 
-class AddNewItemForm extends React.Component {
+type StateType = {
+    error: boolean
+    title: string
+}
+type OwnProps = {
+    addItem: (newText: string) => void
+    title?: string
+}
+type  PropsType = OwnProps
 
-    state = {
+class AddNewItemForm extends React.Component<PropsType, StateType> {
+
+    state: StateType = {
         error: false,
         title: ''
     }
@@ -19,21 +28,20 @@ class AddNewItemForm extends React.Component {
             this.props.addItem(newText)
         }
     }
-    onInputChange = (e) => {
+    onInputChange = (e: ChangeEvent<HTMLInputElement>) => {
         this.setState({
             error: false,
             title: e.currentTarget.value.trimLeft()
         });
     }
-    onEnterButtonPress = (e) => {
+    onEnterButtonPress = (e: React.KeyboardEvent<HTMLDivElement>) => {
         if (e.key === 'Enter') {
             this.onAddItemClick()
         }
     }
     render = () => {
-        let classForInput = this.state.error === true ? 'error' : '';
+        let classForInput = this.state.error ? 'error' : '';
         return (
-
                 <div className="todoList-newTaskForm">
                     <input className={classForInput} onKeyPress={this.onEnterButtonPress}
                            onChange={this.onInputChange} value={this.state.title}
