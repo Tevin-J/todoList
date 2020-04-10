@@ -1,5 +1,7 @@
 import {api} from "./api";
 import {TaskType, TodoListType} from "./types/entities";
+import {ThunkAction, ThunkDispatch} from "redux-thunk";
+import {AppStateType} from "./store";
 
 export const ADD_TODOLIST = 'TodoList/Reducer/ADD-TODOLIST'
 export const ADD_TASK = 'TodoList/Reducer/ADD-TASK'
@@ -213,7 +215,9 @@ const removeTaskAC = (todoListId: string, taskId: string): RemoveTaskType => ({t
 const loadingTodoListsAC = (isFetching: boolean): LoadingTodoListsType => ({type: LOADING_TODOLISTS, isFetching})
 const loadingTasksAC = (isFetching: boolean, todoListId: string): LoadingTasksType => ({type: LOADING_TASKS, isFetching, todoListId})
 /*thunk creators*/
-export const getTodoLists = () => (dispatch: any) => {
+type ThunkType = ThunkAction<void, AppStateType, unknown, AppActionType>
+export const getTodoLists = (): ThunkType => (dispatch: ThunkDispatch<AppStateType, unknown, AppActionType>,
+                                              getState: () => AppStateType) => {
     dispatch(loadingTodoListsAC(true))
     api.getTodoLists()
         .then(response => {
@@ -221,7 +225,8 @@ export const getTodoLists = () => (dispatch: any) => {
             dispatch(loadingTodoListsAC(false))
         })
 }
-export const createTodoList = (title: string) => (dispatch: any) => {
+export const createTodoList = (title: string): ThunkType => (dispatch: ThunkDispatch<AppStateType, unknown, AppActionType>,
+                                                             getState: () => AppStateType) => {
     api.createTodoList(title)
         .then(response => {
             if (response.data.resultCode === 0) {
@@ -229,7 +234,8 @@ export const createTodoList = (title: string) => (dispatch: any) => {
             }
         })
 }
-export const removeTodoList = (todoListId: string) => (dispatch: any) => {
+export const removeTodoList = (todoListId: string): ThunkType => (dispatch: ThunkDispatch<AppStateType, unknown, AppActionType>,
+                                                                  getState: () => AppStateType) => {
     api.removeTodoList(todoListId)
         .then(response => {
             if (response.data.resultCode === 0) {
@@ -238,7 +244,8 @@ export const removeTodoList = (todoListId: string) => (dispatch: any) => {
 
         })
 }
-export const getTasks = (todoListId: string) => (dispatch: any) => {
+export const getTasks = (todoListId: string): ThunkType => (dispatch: ThunkDispatch<AppStateType, unknown, AppActionType>,
+                                                            getState: () => AppStateType) => {
     dispatch(loadingTasksAC(true, todoListId))
     api.getTasks(todoListId)
         .then(response => {
@@ -248,7 +255,8 @@ export const getTasks = (todoListId: string) => (dispatch: any) => {
             }
         })
 }
-export const addTask = (todoListId: string, newText: string) => (dispatch: any) => {
+export const addTask = (todoListId: string, newText: string): ThunkType => (dispatch: ThunkDispatch<AppStateType, unknown, AppActionType>,
+                                                                            getState: () => AppStateType) => {
     api.createTask(todoListId, newText)
         .then(response => {
             if (response.data.resultCode === 0) {
@@ -256,7 +264,8 @@ export const addTask = (todoListId: string, newText: string) => (dispatch: any) 
             }
         })
 }
-export const changeTask = (todoListId: string, taskId: string, changedTask: TaskType) => (dispatch: any) => {
+export const changeTask = (todoListId: string, taskId: string, changedTask: TaskType): ThunkType => (dispatch: ThunkDispatch<AppStateType, unknown, AppActionType>,
+                                                                                                     getState: () => AppStateType) => {
     debugger
     api.changeTask(todoListId, taskId, changedTask)
         .then(response => {
@@ -266,13 +275,15 @@ export const changeTask = (todoListId: string, taskId: string, changedTask: Task
             }
         })
 }
-export const removeTask = (todoListId: string, taskId: string) => (dispatch: any) => {
+export const removeTask = (todoListId: string, taskId: string): ThunkType => (dispatch: ThunkDispatch<AppStateType, unknown, AppActionType>,
+                                                                              getState: () => AppStateType) => {
     api.removeTask(todoListId, taskId)
         .then(response => {
             dispatch(removeTaskAC(todoListId, taskId))
         })
 }
-export const changeTodoList = (todoListId: string, todoListTitle: string) => (dispatch: any) => {
+export const changeTodoList = (todoListId: string, todoListTitle: string): ThunkType => (dispatch: ThunkDispatch<AppStateType, unknown, AppActionType>,
+                                                                                         getState: () => AppStateType) => {
     api.changeTodoList(todoListId, todoListTitle)
         .then(response => {
             if (response.data.resultCode === 0) {
