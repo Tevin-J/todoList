@@ -45,7 +45,6 @@ class App extends React.Component<PropsType> {
                     }
                 </div>
             </>
-
         );
     }
 }

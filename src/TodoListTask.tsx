@@ -44,7 +44,6 @@ class TodoListTask extends React.Component<PropsType, StateType> {
     }
 
     onStatusChanged = (event: ChangeEvent<HTMLInputElement>) => {
-        debugger
         let status = event.currentTarget.checked ? 2 : 0;
         this.props.changeStatus(this.props.task, status);
     };

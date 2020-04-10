@@ -74,7 +74,6 @@ const reducer = (state: InitialStateType = initialState, action: AppActionType):
                 })
             }
         case CHANGE_TASK:
-            debugger
             return {
                 ...state,
                 todoLists: state.todoLists.map(tl => {
@@ -266,10 +265,8 @@ export const addTask = (todoListId: string, newText: string): ThunkType => (disp
 }
 export const changeTask = (todoListId: string, taskId: string, changedTask: TaskType): ThunkType => (dispatch: ThunkDispatch<AppStateType, unknown, AppActionType>,
                                                                                                      getState: () => AppStateType) => {
-    debugger
     api.changeTask(todoListId, taskId, changedTask)
         .then(response => {
-            debugger
             if (response.data.resultCode === 0) {
                 dispatch(changeTaskAC(response.data.data.item))
             }

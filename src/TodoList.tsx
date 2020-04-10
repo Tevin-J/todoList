@@ -55,7 +55,6 @@ class TodoList extends React.Component<PropsType, StateType> {
     };
 
     changeStatus = (task: TaskType, status: number) => {
-        debugger
         this.changeTask(task, {status: status})
     }
 
